@@ -1,5 +1,5 @@
 
-filePath = 'C:\\Users\\alessio.bocci\\OneDrive - Nivi Spa\\LAVORO\\Conversione CSV a file EXCEL OSPITALETTO analisi AGNESE\\'
+filePath = 'C:\\Users\\aless\\files\\'
 
 const fs = require('fs')
 
@@ -22,7 +22,8 @@ let targa ='';
 let articoloCDS ='';
 let dataNotifica ='';
 
-let verbale = {
+function Verbale () 
+  {
   codiceFiscaleConducente,
   nomeCognomeConducente,
   codiceFiscaleProprietario,
@@ -32,17 +33,17 @@ let verbale = {
   dataVerbale,  
   targa,
   articoloCDS,
-  dataNotifica,
+  dataNotifica
 }
 
 let rigaFile = '';
 let csvData = [];
 
+var verbale = new Verbale();
 // do-while loops
 let i =0;
 let x = array.length;
 do{
-
     let line = array[i].substring(0,2);
 
     if (line=='N2')
@@ -63,6 +64,7 @@ do{
     { 
       if (rigaFile == line){
       csvData.push (verbale);
+      var verbale = new Verbale();
       i++;
       continue;
       }
@@ -77,10 +79,10 @@ do{
     }
 
     rigaFile = array[i].substring(0,2);
-
     i++;
 
 } while(i<x);
+
 
 console.log(csvData)
 
