@@ -101,16 +101,16 @@ function extractData(data,activities) {
         if (line=='N2')
         { 
           rigaFile = line;
-          verbale.codiceFiscaleConducente = (line=='N2' ? array[i].substring(activities.codiceFiscaleConducente[0],activities.codiceFiscaleConducente[1]):'');
-          verbale.nomeCognomeConducente = (line=='N2' ? array[i].substring(activities.nomeCognomeConducente[0],activities.nomeCognomeConducente[1]):'');
+          verbale.codiceFiscaleConducente = String(line=='N2' ? array[i].substring(activities.codiceFiscaleConducente[0],activities.codiceFiscaleConducente[1]):'').trim();
+          verbale.nomeCognomeConducente = String(line=='N2' ? array[i].substring(activities.nomeCognomeConducente[0],activities.nomeCognomeConducente[1]):'').trim();
         }
         
         if (line=='N3')
         { 
           rigaFile = line;
-          verbale.codiceFiscaleProprietario = (line=='N3' ? array[i].substring(activities.codiceFiscaleProprietario[0],activities.codiceFiscaleProprietario[1]):'');
-          verbale.nomeCognomeProprietario = (line=='N3' ? array[i].substring(activities.nomeCognomeProprietario[0],activities.nomeCognomeProprietario[1]):'');
-        }nomeCognomeProprietario
+          verbale.codiceFiscaleProprietario = String(line=='N3' ? array[i].substring(activities.codiceFiscaleProprietario[0],activities.codiceFiscaleProprietario[1]):'').trim();
+          verbale.nomeCognomeProprietario = String(line=='N3' ? array[i].substring(activities.nomeCognomeProprietario[0],activities.nomeCognomeProprietario[1]):'').trim();
+        }
         
         if (line=='N4')
         { 
@@ -121,15 +121,48 @@ function extractData(data,activities) {
           continue;
           }
           else{
-            verbale.importo = (line=='N4' ? array[i].substring(activities.importo[0],activities.importo[1]):'');
-            verbale.numeroVerbale = (line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]):'');
-            verbale.dataVerbale = (line=='N4' ? array[i].substring(activities.dataVerbale[0],activities.dataVerbale[1]):'');
-            verbale.targa = (line=='N4' ? array[i].substring(activities.targa[0],activities.targa[1]):'').split('Tg.')[1];
-            verbale.articoloCDS = (line=='N4' ? array[i].substring(activities.articoloCDS[0],activities.articoloCDS[1]):'').split('D')[0];
-            if (typeof(line=='N4' ? array[i].substring(activities.dataNotifica[0],activities.dataNotifica[1]):'').split('t')[1]=='undefined')
-                verbale.dataNotifica = convertData((line=='N4' ? array[i].substring(activities.dataNotifica[0],activities.dataNotifica[1]):'').split('t')[0]);
+              //importo
+            verbale.importo = String(line=='N4' ? array[i].substring(activities.importo[0],activities.importo[1]):'').trim();
+
+            //numeroVerbale
+            if (String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]):'').split('/')[0].length <= 5)
+                verbale.numeroVerbale = String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]-3):'').trim();   
+            else if (String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]):'').split('/')[0].length > 7)
+            {
+                verbale.numeroVerbale = String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]+1):'').trim();   
+            }
             else
-                verbale.dataNotifica = convertData((line=='N4' ? array[i].substring(activities.dataNotifica[0],activities.dataNotifica[1]):'').split('t')[1]);
+                verbale.numeroVerbale = String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]):'').trim();
+
+            //dataVerbale
+            if (String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]):'').split('/')[0].length <= 5)
+                verbale.dataVerbale = String(line=='N4' ? array[i].substring(activities.dataVerbale[0]-2,activities.dataVerbale[1]-2):'').trim();
+            else if (String(line=='N4' ? array[i].substring(activities.numeroVerbale[0],activities.numeroVerbale[1]):'').split('/')[0].length >= 8)
+                verbale.dataVerbale = String(line=='N4' ? array[i].substring(activities.dataVerbale[0]+2,activities.dataVerbale[1]+2):'').trim();
+            else if (typeof(line=='N4' ? array[i].substring(activities.dataVerbale[0],activities.dataVerbale[1]):'').split('P')[1]=='undefined')
+                verbale.dataVerbale = String(line=='N4' ? array[i].substring(activities.dataVerbale[0],activities.dataVerbale[1]):'').split('P')[0].trim();
+            else
+                verbale.dataVerbale = String(line=='N4' ? array[i].substring(activities.dataVerbale[0],activities.dataVerbale[1]):'').split('P')[1].trim();
+            
+            //targa
+            if ((line=='N4' ? array[i].substring(activities.targa[0],activities.targa[1]):'').includes('.'))
+                verbale.targa = String(line=='N4' ? array[i].substring(activities.targa[0],activities.targa[1]):'').split('.')[1].trim();          
+            else
+                verbale.targa = String(line=='N4' ? array[i].substring(activities.targa[0],activities.targa[1]):'').trim();
+
+            if (String(verbale.targa).includes(' A'))
+                verbale.targa =String(verbale.targa).split('A')[0].trim()
+
+
+            //articoloCDS
+            verbale.articoloCDS = (line=='N4' ? array[i].substring(activities.articoloCDS[0],activities.articoloCDS[1]):'').split('D')[0] ;
+            verbale.articoloCDS = 'Art.'+verbale.articoloCDS.split('.')[1]
+
+            //dataNotifica
+            if (typeof(line=='N4' ? array[i].substring(activities.dataNotifica[0],activities.dataNotifica[1]):'').split('t')[1]=='undefined')
+                verbale.dataNotifica = String(convertData((line=='N4' ? array[i].substring(activities.dataNotifica[0],activities.dataNotifica[1]):'').split('t')[0])).trim();
+            else
+                verbale.dataNotifica = String(convertData((line=='N4' ? array[i].substring(activities.dataNotifica[0],activities.dataNotifica[1]):'').split('t')[1])).trim();
           }
         }
     
