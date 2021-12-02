@@ -77,6 +77,12 @@ function extractData(data, activities) {
     }
 
     let rigaFile = '';
+    
+    let finalData = {
+        csvData: [],
+        dataCount: []
+    }
+
     let csvData = [];
 
     var verbale = new Verbale();
@@ -90,6 +96,16 @@ function extractData(data, activities) {
             rigaFile = line;
             verbale.codiceFiscaleConducente = String(line == 'N2' ? array[i].substring(activities.codiceFiscaleConducente[0], activities.codiceFiscaleConducente[1]) : '').replace(/\s+/g, ' ').trim()
             verbale.nomeCognomeConducente = String(line == 'N2' ? array[i].substring(activities.nomeCognomeConducente[0], activities.nomeCognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
+
+            if (array[i].substring(activities.nomeCognomeConducente[0] - 1)[0] == '1' || array[i].substring(activities.nomeCognomeConducente[0] - 1)[0] == '2')
+                verbale.nomeCognomeConducente = verbale.nomeCognomeConducente;
+            else {
+                verbale.nomeCognomeConducente = String(line == 'N2' ? array[i].substring(activities.nomeCognomeConducente[0] - 10, activities.nomeCognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
+                verbale.nomeCognomeConducente = verbale.nomeCognomeConducente.substr(1, verbale.nomeCognomeConducente.length);
+            }
+
+            // if (verbale.nomeCognomeConducente.trim().includes('1JAMET'))
+            //     break;
         }
 
         if (line == 'N3') {
@@ -110,11 +126,23 @@ function extractData(data, activities) {
 
                 //numeroVerbale
                 if (String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1]) : '').split('/')[0].length <= 5)
-                    verbale.numeroVerbale = String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1] - 3) : '').trim();
+                    verbale.numeroVerbale = String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1] - 2) : '').trim();
                 else if (String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1]) : '').split('/')[0].length > 7) {
                     verbale.numeroVerbale = String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1] + 1) : '').trim();
                 } else
                     verbale.numeroVerbale = String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1]) : '').trim();
+
+                if (verbale.numeroVerbale.length >= 12 && (verbale.numeroVerbale.substring(3).includes('P') == false || verbale.numeroVerbale.substring(3).includes('V') == false))
+                    verbale.numeroVerbale = String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1] + 4) : '').trim();
+
+                if ((String(verbale.numeroVerbale).indexOf('P', 4) + 1) != 0) {
+                    if ((String(verbale.numeroVerbale).indexOf('P', 4) + 1) != verbale.numeroVerbale.length)
+                        verbale.numeroVerbale = verbale.numeroVerbale.split('P')[0] + 'P';
+                }
+                if ((String(verbale.numeroVerbale).indexOf('V', 4) + 1) != 0) {
+                    if ((String(verbale.numeroVerbale).indexOf('V', 4) + 1) != verbale.numeroVerbale.length)
+                        verbale.numeroVerbale = verbale.numeroVerbale.split('V')[0] + 'V';
+                }
 
                 //dataVerbale
                 if (String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1]) : '').split('/')[0].length <= 5)
@@ -126,6 +154,10 @@ function extractData(data, activities) {
                 else
                     verbale.dataVerbale = String(line == 'N4' ? array[i].substring(activities.dataVerbale[0], activities.dataVerbale[1]) : '').split('P')[1].trim();
 
+                if (verbale.dataVerbale.includes('V ') || verbale.dataVerbale.includes('P '))
+                    verbale.dataVerbale = String(line == 'N4' ? array[i].substring(activities.dataVerbale[0], activities.dataVerbale[1] + 4) : '').split('P ')[1].trim();
+
+
                 //targa
                 if ((line == 'N4' ? array[i].substring(activities.targa[0], activities.targa[1]) : '').includes('.'))
                     verbale.targa = String(line == 'N4' ? array[i].substring(activities.targa[0], activities.targa[1]) : '').split('.')[1].trim();
@@ -133,8 +165,10 @@ function extractData(data, activities) {
                     verbale.targa = String(line == 'N4' ? array[i].substring(activities.targa[0], activities.targa[1]) : '').trim();
 
                 if (String(verbale.targa).includes(' A'))
-                    verbale.targa = String(verbale.targa).split('A')[0].trim()
+                    verbale.targa = String(verbale.targa).split(' A')[0].trim()
 
+                if (verbale.targa.length <= 5)
+                    verbale.targa = String(line == 'N4' ? array[i].substring(activities.targa[0], activities.targa[1] + 4) : '').split('.')[1].trim();
 
                 //articoloCDS
                 verbale.articoloCDS = (line == 'N4' ? array[i].substring(activities.articoloCDS[0], activities.articoloCDS[1]) : '').split('D')[0];
@@ -158,6 +192,8 @@ function extractData(data, activities) {
                         verbale.dataNotifica = String(convertData(verbale.dataNotifica.substr(verbale.dataNotifica.length - 8)));
                     }
                 }
+                if (verbale.dataNotifica.length != 10)
+                    verbale.dataNotifica = String(convertData((line == 'N4' ? array[i].substring(activities.dataNotifica[0] - 2, activities.dataNotifica[1]) : ''))).trim();
 
 
                 //caso in cui ho solo 7 caratteri nella data (devono essere 8)
@@ -170,8 +206,6 @@ function extractData(data, activities) {
 
                 }
 
-                if (verbale.numeroVerbale.trim().includes('12091713'))
-                    break;
             }
         }
 
@@ -180,7 +214,6 @@ function extractData(data, activities) {
 
     }
     while (i < x);
-
     return csvData;
 };
 
