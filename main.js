@@ -2,7 +2,8 @@ filePath = 'C:\\Users\\alessio.bocci\\OneDrive - Nivi Spa\\LAVORO\\Conversione C
 
 let activities = {
     codiceFiscaleConducente: [24, 40],
-    nomeCognomeConducente: [210 - 1, 254 - 1],
+    cognomeConducente: [210 - 1, 234 - 1],
+    nomeConducente: [234 - 1, 254 - 1],
     codiceFiscaleProprietario: [24, 40],
     nomeCognomeProprietario: [199, 243],
     importo: [32, 68],
@@ -64,7 +65,8 @@ function extractData(data, activities, fileName) {
 
     function Verbale() {
         codiceFiscaleConducente: '';
-        nomeCognomeConducente: '';
+        nomeConducente: '';
+        cognomeConducente: '';
         codiceFiscaleProprietario: '';
         nomeCognomeProprietario: '';
         importo: '';
@@ -112,17 +114,23 @@ function extractData(data, activities, fileName) {
             rigaFile = line;
 
             verbale.codiceFiscaleConducente = String(line == 'N2' ? array[i].substring(activities.codiceFiscaleConducente[0], activities.codiceFiscaleConducente[1]) : '').replace(/\s+/g, ' ').trim()
-            verbale.nomeCognomeConducente = String(line == 'N2' ? array[i].substring(activities.nomeCognomeConducente[0], activities.nomeCognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
 
-            if (array[i].substring(activities.nomeCognomeConducente[0] - 1)[0] == '1' || array[i].substring(activities.nomeCognomeConducente[0] - 1)[0] == '2')
-                verbale.nomeCognomeConducente = verbale.nomeCognomeConducente;
+            verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0], activities.cognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
+            verbale.nomeConducente = String(line == 'N2' ? array[i].substring(activities.nomeConducente[0], activities.nomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
+
+            if (array[i].substring(activities.cognomeConducente[0] - 1)[0] == '1' || array[i].substring(activities.cognomeConducente[0] - 1)[0] == '2')
+                verbale.cognomeConducente = verbale.cognomeConducente;
             else {
-                verbale.nomeCognomeConducente = String(line == 'N2' ? array[i].substring(activities.nomeCognomeConducente[0] - 10, activities.nomeCognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
-                verbale.nomeCognomeConducente = verbale.nomeCognomeConducente.substr(1, verbale.nomeCognomeConducente.length);
+                verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0] - 10, activities.cognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
+                verbale.cognomeConducente = verbale.cognomeConducente.substr(1, verbale.cognomeConducente.length);
             }
 
-            // if (verbale.nomeCognomeConducente.trim().includes('1JAMET'))
-            //     break;
+            if (verbale.codiceFiscaleConducente.length == 11) {
+                verbale.cognomeConducente = verbale.cognomeConducente + " " + verbale.nomeConducente;
+                verbale.nomeConducente = "";
+            }
+
+
         }
 
         if (line == 'N3') {
@@ -168,7 +176,7 @@ function extractData(data, activities, fileName) {
             }
             if ((String(verbale.numeroVerbale).indexOf('V', 4) + 1) != 0) {
                 if ((String(verbale.numeroVerbale).indexOf('V', 4) + 1) != verbale.numeroVerbale.length)
-                    verbale.numeroVerbale = verbale.numeroVerbale.split('V')[0] + 'V';
+                    verbale.numeroVerbale = 'V' + verbale.numeroVerbale.split('V')[1];
             }
 
             //dataVerbale
@@ -205,6 +213,15 @@ function extractData(data, activities, fileName) {
 
             verbale.articoloCDS = 'Art.' + verbale.articoloCDS.split('.')[1]
 
+            if ((verbale.articoloCDS).length <= 4) {
+                var begin = array[i].indexOf(verbale.targa) + (verbale.targa).length + 1;
+                verbale.articoloCDS = (line == 'N4' ? array[i].substring(begin, begin + 9 + 3) : '').split('D')[0];
+            }
+
+            // if (verbale.codiceFiscaleConducente.trim().includes('MSSRSO65A49M067R'))
+            //     break;
+            // if (verbale.codiceFiscaleConducente.trim().includes('00001930130'))
+            //     break;
 
             //dataNotifica sottocasi particolari
 
@@ -247,6 +264,7 @@ function extractData(data, activities, fileName) {
 
         }
 
+
         rigaFile = array[i].substring(0, 2);
         i++;
 
@@ -266,8 +284,12 @@ function saveCsvData(file, csvData) {
                 title: 'CodiceFiscaleConducente'
             },
             {
-                id: 'nomeCognomeConducente',
-                title: 'NomeCognomeConducente'
+                id: 'cognomeConducente',
+                title: 'CognomeConducente'
+            },
+            {
+                id: 'nomeConducente',
+                title: 'NomeConducente'
             },
             {
                 id: 'codiceFiscaleProprietario',
