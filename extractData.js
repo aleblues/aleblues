@@ -43,9 +43,6 @@ function extract(data, activities, fileName) {
   do {
     let line = array[i].substring(0, 2);
 
-    if (line.includes('MGNMLL58E67L206Z'))
-      var a = 0;
-
     // console.log(i + " prima di N2")
     if (line == 'N2') {
       numeroVerbaliPerFile.numeroVerbale += 1;
@@ -57,18 +54,34 @@ function extract(data, activities, fileName) {
       verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0], activities.cognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
       verbale.nomeConducente = String(line == 'N2' ? array[i].substring(activities.nomeConducente[0], activities.nomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
 
-      if (array[i].substring(activities.cognomeConducente[0] - 1)[0] == '1' || array[i].substring(activities.cognomeConducente[0] - 1)[0] == '2')
+
+      if (array[i].substring(activities.cognomeConducente[0] - 1)[0] == '2')
+        verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0], activities.cognomeConducente[1] + 50) : '').replace(/\s+/g, ' ').trim()
+      if (array[i].substring(activities.cognomeConducente[0] - 1)[0] == '1')
         verbale.cognomeConducente = verbale.cognomeConducente;
-      else {
-        verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0] - 10, activities.cognomeConducente[1]) : '').replace(/\s+/g, ' ').trim()
-        verbale.cognomeConducente = verbale.cognomeConducente.substr(1, verbale.cognomeConducente.length);
+      if (array[i].substring(activities.cognomeConducente[0] - 1)[0] != 1 &&
+        array[i].substring(activities.cognomeConducente[0] - 1)[0] != 2 &&
+        array[i].substring(activities.cognomeConducente[0] - 10, activities.cognomeConducente[1]).includes('1')) {
+        verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0] - 10,
+          activities.cognomeConducente[1]) : '');
+        verbale.cognomeConducente = verbale.cognomeConducente.substr(verbale.cognomeConducente.indexOf('1') + 1, 20).replace(/\s+/g, ' ').trim();
+      }
+      if (array[i].substring(activities.cognomeConducente[0] - 1)[0] != 1 &&
+        array[i].substring(activities.cognomeConducente[0] - 1)[0] != 2 &&
+        array[i].substring(activities.cognomeConducente[0] - 10,
+          activities.cognomeConducente[0]).includes('2')) {
+        verbale.cognomeConducente = String(line == 'N2' ? array[i].substring(activities.cognomeConducente[0] - 10,
+          activities.cognomeConducente[1]) : '');
+        verbale.cognomeConducente = verbale.cognomeConducente.substr(verbale.cognomeConducente.indexOf('2') + 1, 50).replace(/\s+/g, ' ').trim();
       }
 
+
       if (verbale.codiceFiscaleConducente.length == 11) {
-        verbale.cognomeConducente = verbale.cognomeConducente + " " + verbale.nomeConducente;
         verbale.nomeConducente = "";
       }
 
+      // if (verbale.codiceFiscaleConducente.trim().includes('02681400020'))
+      //   break;
 
     }
 
@@ -157,8 +170,6 @@ function extract(data, activities, fileName) {
         verbale.articoloCDS = (line == 'N4' ? array[i].substring(begin, begin + 9 + 3) : '').split('D')[0];
       }
 
-      if (verbale.codiceFiscaleConducente.trim().includes('00170560064'))
-        break;
       // if (verbale.codiceFiscaleConducente.trim().includes('00001930130'))
       //     break;
 
