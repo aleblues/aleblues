@@ -109,7 +109,12 @@ function extract(data, activities, fileName) {
 
       // console.log(i + " dentro  N4 ")
       //importo
+
       verbale.importo = String(line == 'N4' ? array[i].substring(activities.importo[0], activities.importo[1]) : '').trim();
+      const pair = Array.from(verbale.importo)
+      pair.splice(24, 0, ',')
+      verbale.importo = '';
+      verbale.importo = pair.join('');
 
       //numeroVerbale
       if (String(line == 'N4' ? array[i].substring(activities.numeroVerbale[0], activities.numeroVerbale[1]) : '').split('/')[0].length <= 5)

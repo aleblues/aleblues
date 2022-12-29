@@ -1,7 +1,9 @@
 function saveFile(file, csvData) {
     let createCsvWriter = require('csv-writer').createObjectCsvWriter;
+
     let csvWriter = createCsvWriter({
         path: file + '.csv',
+        fieldDelimiter: ';',
         header: [{
                 id: 'codiceFiscaleConducente',
                 title: 'CodiceFiscaleConducente'
@@ -23,8 +25,16 @@ function saveFile(file, csvData) {
                 title: 'NomeCognomeProprietario'
             },
             {
+                id: 'indirizzo',
+                title: 'indirizzo'
+            },
+            {
                 id: 'importo',
                 title: 'Importo'
+            },
+            {
+                id: 'maggiorazione',
+                title: 'maggiorazione'
             },
             {
                 id: 'numeroVerbale',
