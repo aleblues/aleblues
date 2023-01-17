@@ -14,7 +14,6 @@ let activities = {
     cognomeConducente: [210 - 1, 234 - 1],
     nomeConducente: [234 - 1, 254 - 1],
     codiceFiscaleProprietario: [24, 40],
-    nomeCognomeProprietario: [199, 243],
     importo: [32, 68],
     numeroVerbale: [70, 81],
     dataVerbale: [81, 90],
@@ -34,6 +33,9 @@ switch (comune) {
         activities.dataVerbale = [160, 166]
         activities.indirizzo = [56, 86]
         activities.maggiorazione = [32, 68]
+        activities.indirizzoProprietario = [46, 76]
+        activities.nomeCognomeProprietario = [199, 243]
+
         break;
     case "ospedaletti":
         csvFile = extractData(data, activities, file);
