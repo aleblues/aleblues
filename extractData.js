@@ -9,11 +9,12 @@ function extract(data, activities, fileName) {
     codiceFiscaleProprietario: '';
     nomeCognomeProprietario: '';
     importo: '';
+    maggiorazione: '';
     numeroVerbale: '';
     dataVerbale: '';
     targa: '';
     articoloCDS: '';
-    dataNotifica: ''
+    dataNotifica: '';
   }
 
   function NumeroVerbaliPerFile() {
@@ -148,7 +149,6 @@ function extract(data, activities, fileName) {
 
       if (verbale.dataVerbale.includes('V ') || verbale.dataVerbale.includes('P '))
         verbale.dataVerbale = String(line == 'N4' ? array[i].substring(activities.dataVerbale[0], activities.dataVerbale[1] + 4) : '').split('P ')[1].trim();
-
 
       //targa
       if ((line == 'N4' ? array[i].substring(activities.targa[0], activities.targa[1]) : '').includes('.'))

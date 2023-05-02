@@ -17,6 +17,10 @@ function saveFile(file, csvData) {
                 title: 'NomeConducente'
             },
             {
+                id: 'indirizzo',
+                title: 'indirizzoConducente'
+            },
+            {
                 id: 'codiceFiscaleProprietario',
                 title: 'CodiceFiscaleProprietario'
             },
@@ -25,8 +29,8 @@ function saveFile(file, csvData) {
                 title: 'NomeCognomeProprietario'
             },
             {
-                id: 'indirizzo',
-                title: 'indirizzo'
+                id: 'indirizzoProprietario',
+                title: 'indirizzoProprietario'
             },
             {
                 id: 'importo',
