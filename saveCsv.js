@@ -53,10 +53,6 @@ function saveFile(file, csvData) {
                 title: 'Targa'
             },
             {
-                id: 'articoloCDS',
-                title: 'ArticoloCDS'
-            },
-            {
                 id: 'dataNotifica',
                 title: 'DataNotifica'
             },
